@@ -1,11 +1,12 @@
 # SpaceStation13-Cheat
-Simple internal Space Station 13 cheat
+Example internal hack for Space Station 13
 
 # Features
 * Wallhack
 * Fullbright
 
 ## Key Bindings
+* Insert - Unload hack
 * Wallhack - Numpad 1 (On/Off)
 * Fullbright - Numpad 2 (On/Off)
 
