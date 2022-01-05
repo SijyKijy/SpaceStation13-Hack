@@ -4,10 +4,10 @@
 #include "Addresses.h"
 
 DWORD WINAPI Main(HMODULE hModule) {
-	DWORD byondcoreModule = (DWORD)GetModuleHandle("byondcore.dll");
+	HMODULE byondcoreModule = GetModuleHandle("byondcore.dll");
 
-	int* fullbright = (int*)GetPointerAddress(byondcoreModule + Addresses::Fullbright_adr, Addresses::Fullbright_offsets);
-	int* wallhack = (int*)GetPointerAddress(byondcoreModule + Addresses::Wallhack_adr, Addresses::Wallhack_offsets);
+	char* fullbrightAddr = (char*)AOBScan(byondcoreModule, Addresses::Fullbright_pattern);
+	char* wallhackAddr = (char*)AOBScan(byondcoreModule, Addresses::Wallhack_pattern);
 
 	bool isfullbrightActivate = false; bool iswallhackActivate = false;
 
@@ -16,21 +16,25 @@ DWORD WINAPI Main(HMODULE hModule) {
 		// Wallhack
 		if (GetAsyncKeyState(VK_NUMPAD1) & 1) {
 			iswallhackActivate = !iswallhackActivate;
-			if (!iswallhackActivate) *wallhack = Addresses::Wallhack_off;
-		}
 
-		if (iswallhackActivate) {
-			*wallhack = Addresses::Wallhack_on;
+			int size = sizeof(Addresses::Wallhack_on) - 1;
+
+			if (iswallhackActivate)
+				Patch(wallhackAddr, Addresses::Wallhack_on, size);
+			else
+				Patch(wallhackAddr, Addresses::Wallhack_off, size);
 		}
 
 		// Fullbright
 		if (GetAsyncKeyState(VK_NUMPAD2) & 1) {
 			isfullbrightActivate = !isfullbrightActivate;
-			if (!isfullbrightActivate) *fullbright = Addresses::Fullbright_off;
-		}
 
-		if (isfullbrightActivate){
-			*fullbright = Addresses::Fullbright_on;
+			int size = sizeof(Addresses::Fullbright_on) - 1;
+
+			if (isfullbrightActivate)
+				Patch(fullbrightAddr, Addresses::Fullbright_on, size);
+			else
+				Patch(fullbrightAddr, Addresses::Fullbright_off, size);
 		}
 	}
 
@@ -46,6 +50,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	switch (ul_reason_for_call)
 	{
 	case DLL_PROCESS_ATTACH:
+		DisableThreadLibraryCalls(hModule);
 		CloseHandle(CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)Main, hModule, 0, nullptr));
 		break;
 	case DLL_PROCESS_DETACH:

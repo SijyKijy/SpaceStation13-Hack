@@ -3,15 +3,14 @@
 #include <vector>
 
 namespace Addresses {
-	// Fullbright
-	DWORD Fullbright_adr = 0x0035D3D8;
-	std::vector<DWORD> Fullbright_offsets = { 0x0, 0x4, 0x10, 0x90, 0x190 };
-	int Fullbright_on = 17785856;
-	int Fullbright_off = 18441216;
 
 	// Wallhack
-	DWORD Wallhack_adr = 0x0035D3D8;
-	std::vector<DWORD> Wallhack_offsets = { 0x0, 0x10, 0x90, 0x18C };
-	int Wallhack_on = 60;
-	int Wallhack_off = 0;
+	const char* Wallhack_pattern = "8B 93 24 02 00 00";
+	char Wallhack_off[] = "\x8B\x93\x24\x02\x00\x00";
+	char Wallhack_on[] = "\xBA\x3C\x00\x00\x00\x90";
+
+	// Fullbright
+	const char* Fullbright_pattern = "0F B6 83 29 02 00 00";
+	char Fullbright_off[] = "\x0F\xB6\x83\x29\x02\x00\x00";
+	char Fullbright_on[] = "\xB8\x55\x02\x00\x00\x66\x90";
 }
